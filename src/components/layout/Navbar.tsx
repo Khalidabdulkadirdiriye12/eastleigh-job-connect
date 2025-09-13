@@ -94,9 +94,6 @@ export function Navbar() {
           <Link to="/contact" className="text-muted-foreground hover:text-primary transition-smooth font-medium">
             Contact
           </Link>
-          <Link to="/careers" className="text-muted-foreground hover:text-primary transition-smooth font-medium">
-            Careers
-          </Link>
         </nav>
 
         <div className="flex items-center space-x-2 sm:space-x-4">
@@ -143,13 +140,6 @@ export function Navbar() {
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   Contact
-                </Link>
-                <Link 
-                  to="/careers" 
-                  className="mobile-nav-item"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  Careers
                 </Link>
                 
                 {user && isAdmin && (
