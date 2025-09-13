@@ -38,7 +38,7 @@ export function JobModal({ job, isOpen, onClose, isLoggedIn }: JobModalProps) {
 
   const formatSalary = (salary?: string) => {
     if (!salary) return null;
-    return salary.startsWith('£') ? salary : `£${salary}`;
+    return salary.startsWith('KSH') ? salary : salary.startsWith('£') ? salary : `KSH ${salary}`;
   };
 
   const formatContactInfo = (contact?: string | null) => {
