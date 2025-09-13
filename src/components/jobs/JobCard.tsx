@@ -2,57 +2,49 @@ import { useState } from "react";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { MapPin, Calendar, DollarSign, Phone, MessageCircle } from "lucide-react";
+import { MapPin, Clock, Phone, MessageCircle, Building2, ExternalLink } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { Link } from "react-router-dom";
 
-interface JobCardProps {
-  job: {
-    id: string;
-    title: string;
-    description: string;
-    location: string;
-    salary?: string;
-    contact_info?: string | null; // Made optional and nullable for security
-    company_name: string;
-    created_at: string;
-    posted_by?: string;
-  };
-  isLoggedIn: boolean;
-  showContactInfo?: boolean;
+interface Job {
+  id: string;
+  title: string;
+  description: string;
+  location: string;
+  salary?: string;
+  contact_info?: string | null;
+  company_name: string;
+  created_at: string;
+  posted_by?: string;
 }
 
-export function JobCard({ job, isLoggedIn, showContactInfo = true }: JobCardProps) {
+interface JobCardProps {
+  job: Job;
+  isLoggedIn: boolean;
+  showContactInfo: boolean;
+  onJobClick: (job: Job) => void;
+}
+
+export function JobCard({ job, isLoggedIn, showContactInfo, onJobClick }: JobCardProps) {
   const [showFullDescription, setShowFullDescription] = useState(false);
 
   const formatSalary = (salary?: string) => {
     if (!salary) return null;
-    return salary.includes('$') ? salary : `$${salary}`;
+    return salary.startsWith('£') ? salary : `£${salary}`;
   };
 
   const formatContactInfo = (contact?: string | null) => {
     if (!contact) return null;
     
-    // Check if it's a phone number (contains only numbers, spaces, dashes, parentheses, plus)
-    const phoneRegex = /^[\d\s\-\(\)\+]+$/;
+    const phoneRegex = /^(\+44|0)[\d\s\-()]{10,}$/;
     const isPhone = phoneRegex.test(contact.replace(/\s/g, ''));
     
-    if (isPhone) {
-      return {
-        type: 'phone',
-        value: contact,
-        icon: Phone,
-        href: `tel:${contact.replace(/\s/g, '')}`,
-      };
-    } else {
-      // Assume it's WhatsApp or other contact method
-      return {
-        type: 'whatsapp',
-        value: contact,
-        icon: MessageCircle,
-        href: `https://wa.me/${contact.replace(/\D/g, '')}`,
-      };
-    }
+    return {
+      type: isPhone ? 'phone' : 'whatsapp',
+      value: contact,
+      icon: isPhone ? Phone : MessageCircle,
+      href: isPhone ? `tel:${contact}` : `https://wa.me/${contact.replace(/\D/g, '')}`
+    };
   };
 
   const contactInfo = job.contact_info ? formatContactInfo(job.contact_info) : null;
@@ -63,80 +55,89 @@ export function JobCard({ job, isLoggedIn, showContactInfo = true }: JobCardProp
     : job.description;
 
   return (
-    <Card className="h-full hover:shadow-lg transition-shadow duration-200 hover:scale-[1.02] transform">
-      <CardHeader>
-        <div className="flex justify-between items-start">
-          <div className="flex-1">
-            <CardTitle className="text-xl font-bold text-primary hover:text-primary/80 cursor-pointer">
-              {job.title}
-            </CardTitle>
-            <p className="text-muted-foreground font-medium">{job.company_name}</p>
-          </div>
+    <Card className="card-hover cursor-pointer shadow-soft hover:shadow-medium transition-smooth" onClick={() => onJobClick(job)}>
+      <CardHeader className="pb-4">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2 mb-2">
+          <CardTitle className="text-xl font-semibold text-primary hover:text-primary/80 transition-smooth">
+            {job.title}
+          </CardTitle>
           {job.salary && (
-            <Badge variant="secondary" className="bg-secondary text-secondary-foreground">
-              <DollarSign className="h-3 w-3 mr-1" />
+            <Badge variant="secondary" className="gradient-button text-white font-semibold px-3 py-1 self-start">
               {formatSalary(job.salary)}
             </Badge>
           )}
         </div>
+        <div className="flex items-center gap-2">
+          <Building2 className="h-4 w-4 text-muted-foreground" />
+          <p className="text-lg font-medium text-foreground">{job.company_name}</p>
+        </div>
       </CardHeader>
 
-      <CardContent className="space-y-4">
-        <div className="flex items-center text-sm text-muted-foreground">
-          <MapPin className="h-4 w-4 mr-2" />
-          {job.location}
+      <CardContent className="py-4">
+        <div className="flex flex-wrap items-center text-muted-foreground mb-3 gap-2 sm:gap-4">
+          <div className="flex items-center">
+            <MapPin className="h-4 w-4 mr-1" />
+            <span className="text-sm">{job.location}</span>
+          </div>
+          <div className="flex items-center">
+            <Clock className="h-4 w-4 mr-1" />
+            <span className="text-sm">{timeAgo}</span>
+          </div>
         </div>
-
-        <div className="flex items-center text-sm text-muted-foreground">
-          <Calendar className="h-4 w-4 mr-2" />
-          {timeAgo}
-        </div>
-
-        <div className="text-sm">
-          <p className="text-foreground">
+        
+        <div className="space-y-3">
+          <p className="text-muted-foreground text-sm leading-relaxed">
             {showFullDescription ? job.description : truncatedDescription}
           </p>
           {job.description.length > 150 && (
             <Button
-              variant="link"
-              className="p-0 h-auto text-primary"
-              onClick={() => setShowFullDescription(!showFullDescription)}
+              variant="ghost"
+              size="sm"
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowFullDescription(!showFullDescription);
+              }}
+              className="text-primary hover:text-primary/80 p-0 h-auto font-medium transition-smooth"
             >
-              {showFullDescription ? "Show less" : "Read more"}
+              {showFullDescription ? "Read less" : "Read more"}
             </Button>
           )}
         </div>
       </CardContent>
 
-      <CardFooter>
-        {isLoggedIn && showContactInfo && contactInfo ? (
-          <div className="w-full">
-            <div className="flex items-center justify-between">
-              <span className="text-sm font-medium">Contact Employer:</span>
-              <Button
-                asChild
-                variant="outline"
-                size="sm"
-                className="bg-secondary text-secondary-foreground hover:bg-secondary/90"
-              >
-                <a href={contactInfo.href} target="_blank" rel="noopener noreferrer">
-                  <contactInfo.icon className="h-4 w-4 mr-2" />
-                  {contactInfo.value}
-                </a>
-              </Button>
-            </div>
-          </div>
-        ) : (
-          <Button
-            asChild
-            variant="secondary"
-            className="w-full bg-secondary text-secondary-foreground hover:bg-secondary/90"
+      <CardFooter className="pt-4">
+        <div className="flex flex-col sm:flex-row gap-2 w-full">
+          <Button 
+            onClick={(e) => {
+              e.stopPropagation();
+              onJobClick(job);
+            }}
+            variant="outline" 
+            className="flex-1 btn-secondary"
           >
-            <Link to="/auth">
-              Login to view contact info
-            </Link>
+            View Details
+            <ExternalLink className="h-3 w-3 ml-1" />
           </Button>
-        )}
+          
+          {isLoggedIn && showContactInfo && contactInfo ? (
+            <Button asChild className="flex-1 gradient-button text-white">
+              <a 
+                href={contactInfo.href} 
+                className="flex items-center justify-center"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <contactInfo.icon className="h-4 w-4 mr-2" />
+                {contactInfo.type === 'phone' ? 'Call Now' : 'WhatsApp'}
+              </a>
+            </Button>
+          ) : (
+            <Button asChild className="flex-1 gradient-button text-white">
+              <a href="/auth" onClick={(e) => e.stopPropagation()}>
+                Sign In to Apply
+              </a>
+            </Button>
+          )}
+        </div>
       </CardFooter>
     </Card>
   );

@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { JobCard } from "./JobCard";
+import { JobModal } from "./JobModal";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Search, MapPin, Briefcase } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
+import { Search, MapPin, Loader2 } from "lucide-react";
 
 interface Job {
   id: string;
@@ -28,15 +28,26 @@ export function JobList({ isLoggedIn }: JobListProps) {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [locationFilter, setLocationFilter] = useState("");
-  const { toast } = useToast();
+  const [selectedJob, setSelectedJob] = useState<Job | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     fetchJobs();
-  }, [isLoggedIn]); // Re-fetch when login status changes
+  }, [isLoggedIn]);
 
   useEffect(() => {
     filterJobs();
   }, [jobs, searchTerm, locationFilter]);
+
+  const handleJobClick = (job: Job) => {
+    setSelectedJob(job);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedJob(null);
+  };
 
   const fetchJobs = async () => {
     try {
@@ -69,11 +80,7 @@ export function JobList({ isLoggedIn }: JobListProps) {
 
       setJobs(sanitizedData || []);
     } catch (error) {
-      toast({
-        title: "Error fetching jobs",
-        description: "Could not load job listings. Please try again.",
-        variant: "destructive",
-      });
+      console.error('Error fetching jobs:', error);
     } finally {
       setLoading(false);
     }
@@ -99,84 +106,78 @@ export function JobList({ isLoggedIn }: JobListProps) {
     setFilteredJobs(filtered);
   };
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    filterJobs();
-  };
-
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center py-12">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-      </div>
-    );
-  }
-
   return (
-    <div className="space-y-6">
-      {/* Search and Filter Section */}
-      <form onSubmit={handleSearch} className="bg-card p-6 rounded-lg border">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="relative">
+    <div className="w-full">
+      {/* Search and Filter Form */}
+      <div className="mb-8 space-y-4">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+          <div className="lg:col-span-2 relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
             <Input
-              placeholder="Search jobs, companies..."
+              type="text"
+              placeholder="Search jobs by title, description, or company..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
+              className="pl-10 h-12 text-base"
             />
           </div>
-          
           <div className="relative">
             <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
             <Input
-              placeholder="Location"
+              type="text"
+              placeholder="Filter by location..."
               value={locationFilter}
               onChange={(e) => setLocationFilter(e.target.value)}
-              className="pl-10"
+              className="pl-10 h-12 text-base"
             />
           </div>
-          
-          <Button 
-            type="submit" 
-            className="bg-secondary text-secondary-foreground hover:bg-secondary/90"
-          >
-            <Search className="h-4 w-4 mr-2" />
-            Search Jobs
-          </Button>
         </div>
-      </form>
-
-      {/* Results Summary */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center text-muted-foreground">
-          <Briefcase className="h-4 w-4 mr-2" />
-          <span>
-            {filteredJobs.length} job{filteredJobs.length !== 1 ? 's' : ''} found
-          </span>
+        
+        <div className="flex justify-center">
+          <Button 
+            onClick={() => {
+              setSearchTerm("");
+              setLocationFilter("");
+            }}
+            variant="outline"
+            className="px-6"
+          >
+            Clear Filters
+          </Button>
         </div>
       </div>
 
-      {/* Job Cards Grid */}
-      {filteredJobs.length === 0 ? (
-        <div className="text-center py-12">
-          <Briefcase className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-          <h3 className="text-lg font-semibold text-foreground mb-2">No jobs found</h3>
-          <p className="text-muted-foreground">
-            Try adjusting your search criteria or check back later for new listings.
-          </p>
+      {/* Job Results */}
+      {loading ? (
+        <div className="flex justify-center items-center py-12">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </div>
+      ) : filteredJobs.length === 0 ? (
+        <div className="text-center py-12 space-y-3">
+          <div className="text-6xl opacity-20">🔍</div>
+          <p className="text-muted-foreground text-lg font-medium">No jobs found matching your criteria</p>
+          <p className="text-muted-foreground text-sm">Try adjusting your search terms or location filter</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
           {filteredJobs.map((job) => (
             <JobCard
               key={job.id}
               job={job}
               isLoggedIn={isLoggedIn}
+              showContactInfo={true}
+              onJobClick={handleJobClick}
             />
           ))}
         </div>
       )}
+
+      <JobModal
+        job={selectedJob}
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        isLoggedIn={isLoggedIn}
+      />
     </div>
   );
 }
