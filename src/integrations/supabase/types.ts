@@ -87,9 +87,59 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      jobs_public: {
+        Row: {
+          company_name: string | null
+          contact_info: string | null
+          created_at: string | null
+          description: string | null
+          id: string | null
+          location: string | null
+          posted_by: string | null
+          salary: string | null
+          title: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          company_name?: string | null
+          contact_info?: never
+          created_at?: string | null
+          description?: string | null
+          id?: string | null
+          location?: string | null
+          posted_by?: string | null
+          salary?: string | null
+          title?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          company_name?: string | null
+          contact_info?: never
+          created_at?: string | null
+          description?: string | null
+          id?: string | null
+          location?: string | null
+          posted_by?: string | null
+          salary?: string | null
+          title?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "jobs_posted_by_fkey"
+            columns: ["posted_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
+      can_view_contact_info: {
+        Args: Record<PropertyKey, never>
+        Returns: boolean
+      }
       is_admin: {
         Args: { user_id: string }
         Returns: boolean
