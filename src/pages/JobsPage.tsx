@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { User, Session } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import { Navbar } from "@/components/layout/Navbar";
+import { Footer } from "@/components/layout/Footer";
 import { JobList } from "@/components/jobs/JobList";
 
 const JobsPage = () => {
@@ -42,6 +43,8 @@ const JobsPage = () => {
         
         <JobList isLoggedIn={!!user} />
       </div>
+      
+      <Footer />
     </div>
   );
 };
