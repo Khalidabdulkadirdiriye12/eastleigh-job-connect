@@ -22,7 +22,7 @@ export type Database = {
           description: string
           id: string
           location: string
-          posted_by: string
+          posted_by: string | null
           salary: string | null
           title: string
           updated_at: string
@@ -34,7 +34,7 @@ export type Database = {
           description: string
           id?: string
           location: string
-          posted_by: string
+          posted_by?: string | null
           salary?: string | null
           title: string
           updated_at?: string
@@ -46,7 +46,7 @@ export type Database = {
           description?: string
           id?: string
           location?: string
-          posted_by?: string
+          posted_by?: string | null
           salary?: string | null
           title?: string
           updated_at?: string
