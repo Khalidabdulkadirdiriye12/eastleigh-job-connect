@@ -73,7 +73,7 @@ export function JobModal({ job, isOpen, onClose, isLoggedIn }: JobModalProps) {
               </div>
             </div>
             {job.salary && (
-              <Badge variant="secondary" className="text-lg font-semibold px-3 py-1 gradient-button text-white">
+              <Badge variant="secondary" className="text-lg font-semibold px-4 py-2 btn-success text-white rounded-full">
                 {formatSalary(job.salary)}
               </Badge>
             )}
@@ -117,7 +117,7 @@ export function JobModal({ job, isOpen, onClose, isLoggedIn }: JobModalProps) {
                 <div className="flex flex-col sm:flex-row gap-3">
                   <Button 
                     asChild 
-                    className="flex-1 gradient-button text-white hover:opacity-90"
+                    className="flex-1 btn-primary"
                   >
                     <a href={contactInfo.href} className="flex items-center justify-center gap-2">
                       <contactInfo.icon className="h-4 w-4" />
@@ -139,7 +139,7 @@ export function JobModal({ job, isOpen, onClose, isLoggedIn }: JobModalProps) {
                 <p className="text-muted-foreground">
                   Sign in to view contact information and apply for this position
                 </p>
-                <Button asChild className="gradient-button text-white">
+                <Button asChild className="btn-primary">
                   <a href="/auth">Sign In to Apply</a>
                 </Button>
               </div>

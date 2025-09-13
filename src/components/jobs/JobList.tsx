@@ -118,7 +118,7 @@ export function JobList({ isLoggedIn }: JobListProps) {
               placeholder="Search jobs by title, description, or company..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 h-12 text-base"
+              className="pl-10 input-modern"
             />
           </div>
           <div className="relative">
@@ -128,7 +128,7 @@ export function JobList({ isLoggedIn }: JobListProps) {
               placeholder="Filter by location..."
               value={locationFilter}
               onChange={(e) => setLocationFilter(e.target.value)}
-              className="pl-10 h-12 text-base"
+              className="pl-10 input-modern"
             />
           </div>
         </div>
@@ -140,7 +140,7 @@ export function JobList({ isLoggedIn }: JobListProps) {
               setLocationFilter("");
             }}
             variant="outline"
-            className="px-6"
+            className="btn-secondary"
           >
             Clear Filters
           </Button>

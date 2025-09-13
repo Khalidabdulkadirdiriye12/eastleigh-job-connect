@@ -71,11 +71,13 @@ export function Navbar() {
   const isAdmin = userProfile?.role === 'admin';
 
   return (
-    <header className="border-b bg-card shadow-soft sticky top-0 z-50">
+    <header className="navbar-modern sticky top-0 z-50">"
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-        <Link to="/" className="flex items-center space-x-2 transition-smooth hover:opacity-80">
-          <Briefcase className="h-6 w-6 text-primary" />
-          <h1 className="text-xl sm:text-2xl font-bold gradient-bg bg-clip-text text-transparent">
+        <Link to="/" className="flex items-center space-x-3 transition-smooth hover:opacity-80">
+          <div className="p-2 gradient-bg rounded-xl shadow-md">
+            <Briefcase className="h-5 w-5 text-primary-foreground" />
+          </div>
+          <h1 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
             Eastleigh Jobs
           </h1>
         </Link>
@@ -224,7 +226,7 @@ export function Navbar() {
               </DropdownMenu>
             </>
           ) : (
-            <Button asChild className="gradient-button text-white font-medium px-6">
+            <Button asChild className="btn-primary">
               <Link to="/auth">Sign In</Link>
             </Button>
           )}

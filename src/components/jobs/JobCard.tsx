@@ -55,14 +55,14 @@ export function JobCard({ job, isLoggedIn, showContactInfo, onJobClick }: JobCar
     : job.description;
 
   return (
-    <Card className="card-hover cursor-pointer shadow-soft hover:shadow-medium transition-smooth" onClick={() => onJobClick(job)}>
+    <Card className="card-modern card-hover cursor-pointer" onClick={() => onJobClick(job)}>
       <CardHeader className="pb-4">
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2 mb-2">
           <CardTitle className="text-xl font-semibold text-primary hover:text-primary/80 transition-smooth">
             {job.title}
           </CardTitle>
           {job.salary && (
-            <Badge variant="secondary" className="gradient-button text-white font-semibold px-3 py-1 self-start">
+            <Badge variant="secondary" className="btn-success text-white font-semibold px-3 py-1 self-start rounded-full">
               {formatSalary(job.salary)}
             </Badge>
           )}
@@ -120,7 +120,7 @@ export function JobCard({ job, isLoggedIn, showContactInfo, onJobClick }: JobCar
           </Button>
           
           {isLoggedIn && showContactInfo && contactInfo ? (
-            <Button asChild className="flex-1 gradient-button text-white">
+            <Button asChild className="flex-1 btn-primary">
               <a 
                 href={contactInfo.href} 
                 className="flex items-center justify-center"
@@ -131,7 +131,7 @@ export function JobCard({ job, isLoggedIn, showContactInfo, onJobClick }: JobCar
               </a>
             </Button>
           ) : (
-            <Button asChild className="flex-1 gradient-button text-white">
+            <Button asChild className="flex-1 btn-primary">
               <a href="/auth" onClick={(e) => e.stopPropagation()}>
                 Sign In to Apply
               </a>
