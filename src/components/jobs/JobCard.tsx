@@ -13,9 +13,10 @@ interface JobCardProps {
     description: string;
     location: string;
     salary?: string;
-    contact_info: string;
+    contact_info?: string | null; // Made optional and nullable for security
     company_name: string;
     created_at: string;
+    posted_by?: string;
   };
   isLoggedIn: boolean;
   showContactInfo?: boolean;
@@ -29,7 +30,9 @@ export function JobCard({ job, isLoggedIn, showContactInfo = true }: JobCardProp
     return salary.includes('$') ? salary : `$${salary}`;
   };
 
-  const formatContactInfo = (contact: string) => {
+  const formatContactInfo = (contact?: string | null) => {
+    if (!contact) return null;
+    
     // Check if it's a phone number (contains only numbers, spaces, dashes, parentheses, plus)
     const phoneRegex = /^[\d\s\-\(\)\+]+$/;
     const isPhone = phoneRegex.test(contact.replace(/\s/g, ''));
@@ -52,7 +55,7 @@ export function JobCard({ job, isLoggedIn, showContactInfo = true }: JobCardProp
     }
   };
 
-  const contactInfo = formatContactInfo(job.contact_info);
+  const contactInfo = job.contact_info ? formatContactInfo(job.contact_info) : null;
   const timeAgo = formatDistanceToNow(new Date(job.created_at), { addSuffix: true });
   
   const truncatedDescription = job.description.length > 150 
@@ -106,7 +109,7 @@ export function JobCard({ job, isLoggedIn, showContactInfo = true }: JobCardProp
       </CardContent>
 
       <CardFooter>
-        {isLoggedIn && showContactInfo ? (
+        {isLoggedIn && showContactInfo && contactInfo ? (
           <div className="w-full">
             <div className="flex items-center justify-between">
               <span className="text-sm font-medium">Contact Employer:</span>

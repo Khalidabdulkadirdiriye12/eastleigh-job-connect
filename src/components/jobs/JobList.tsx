@@ -12,9 +12,10 @@ interface Job {
   description: string;
   location: string;
   salary?: string;
-  contact_info: string;
+  contact_info?: string | null; // Made optional and nullable for security
   company_name: string;
   created_at: string;
+  posted_by?: string;
 }
 
 interface JobListProps {
@@ -31,7 +32,7 @@ export function JobList({ isLoggedIn }: JobListProps) {
 
   useEffect(() => {
     fetchJobs();
-  }, []);
+  }, [isLoggedIn]); // Re-fetch when login status changes
 
   useEffect(() => {
     filterJobs();
@@ -39,16 +40,34 @@ export function JobList({ isLoggedIn }: JobListProps) {
 
   const fetchJobs = async () => {
     try {
-      const { data, error } = await supabase
-        .from('jobs')
-        .select('*')
-        .order('created_at', { ascending: false });
+      let query;
+      
+      if (isLoggedIn) {
+        // Authenticated users can see all job details including contact info
+        query = supabase
+          .from('jobs')
+          .select('*')
+          .order('created_at', { ascending: false });
+      } else {
+        // Anonymous users can only see job details WITHOUT contact info
+        query = supabase
+          .from('jobs')
+          .select('id, title, description, location, salary, company_name, created_at, posted_by')
+          .order('created_at', { ascending: false });
+      }
+
+      const { data, error } = await query;
 
       if (error) {
         throw error;
       }
 
-      setJobs(data || []);
+      // For anonymous users, we explicitly set contact_info to null to prevent any leakage
+      const sanitizedData = isLoggedIn 
+        ? data 
+        : (data || []).map(job => ({ ...job, contact_info: null }));
+
+      setJobs(sanitizedData || []);
     } catch (error) {
       toast({
         title: "Error fetching jobs",
