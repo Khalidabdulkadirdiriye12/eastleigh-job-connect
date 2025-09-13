@@ -64,6 +64,22 @@ const Index = () => {
         </div>
       </section>
 
+      {/* Jobs Section - Moved up for immediate visibility */}
+      <section id="jobs" className="py-16 bg-background">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-primary mb-4">
+              Latest Job Opportunities
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Discover your next career move with jobs from local employers in Eastleigh
+            </p>
+          </div>
+          
+          <JobList isLoggedIn={!!user} />
+        </div>
+      </section>
+
       {/* Stats Section */}
       <section className="py-12 bg-card">
         <div className="container mx-auto px-4">
@@ -90,22 +106,6 @@ const Index = () => {
               <p className="text-muted-foreground">Opportunities in Eastleigh area</p>
             </div>
           </div>
-        </div>
-      </section>
-
-      {/* Jobs Section */}
-      <section id="jobs" className="py-16">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-primary mb-4">
-              Latest Job Opportunities
-            </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Discover your next career move with jobs from local employers in Eastleigh
-            </p>
-          </div>
-          
-          <JobList isLoggedIn={!!user} />
         </div>
       </section>
     </div>
