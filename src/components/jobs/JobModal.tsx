@@ -44,7 +44,7 @@ export function JobModal({ job, isOpen, onClose, isLoggedIn }: JobModalProps) {
   const formatContactInfo = (contact?: string | null) => {
     if (!contact) return null;
     
-    const phoneRegex = /^(\+44|0)[\d\s\-()]{10,}$/;
+    const phoneRegex = /^(\+254|254|07)[\d\s\-()]{8,}$/;
     const isPhone = phoneRegex.test(contact.replace(/\s/g, ''));
     
     return {
@@ -73,7 +73,7 @@ export function JobModal({ job, isOpen, onClose, isLoggedIn }: JobModalProps) {
               </div>
             </div>
             {job.salary && (
-              <Badge variant="secondary" className="text-lg font-semibold px-4 py-2 btn-success text-white rounded-full">
+              <Badge variant="secondary" className="text-lg font-semibold px-4 py-2 bg-accent text-accent-foreground rounded-full">
                 {formatSalary(job.salary)}
               </Badge>
             )}

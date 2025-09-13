@@ -77,8 +77,8 @@ const Contact = () => {
                 <div>
                   <h3 className="font-semibold text-foreground mb-1">Office Location</h3>
                   <p className="text-muted-foreground">
-                    Eastleigh, Hampshire<br />
-                    United Kingdom
+                    Eastleigh, Nairobi<br />
+                    Kenya
                   </p>
                 </div>
               </div>
@@ -90,8 +90,8 @@ const Contact = () => {
                 <div>
                   <h3 className="font-semibold text-foreground mb-1">Email</h3>
                   <p className="text-muted-foreground">
-                    info@eastleighjobs.co.uk<br />
-                    support@eastleighjobs.co.uk
+                    info@eastleighjobs.co.ke<br />
+                    support@eastleighjobs.co.ke
                   </p>
                 </div>
               </div>
@@ -103,8 +103,8 @@ const Contact = () => {
                 <div>
                   <h3 className="font-semibold text-foreground mb-1">Phone</h3>
                   <p className="text-muted-foreground">
-                    +44 23 8000 0000<br />
-                    Monday - Friday: 9AM - 5PM
+                    +254794940900<br />
+                    Monday - Friday: 8AM - 6PM
                   </p>
                 </div>
               </div>
@@ -116,8 +116,8 @@ const Contact = () => {
                 <div>
                   <h3 className="font-semibold text-foreground mb-1">Support Hours</h3>
                   <p className="text-muted-foreground">
-                    Monday - Friday: 9:00 AM - 5:00 PM<br />
-                    Saturday: 10:00 AM - 2:00 PM<br />
+                    Monday - Friday: 8:00 AM - 6:00 PM<br />
+                    Saturday: 9:00 AM - 3:00 PM<br />
                     Sunday: Closed
                   </p>
                 </div>

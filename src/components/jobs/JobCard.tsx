@@ -36,7 +36,7 @@ export function JobCard({ job, isLoggedIn, showContactInfo, onJobClick }: JobCar
   const formatContactInfo = (contact?: string | null) => {
     if (!contact) return null;
     
-    const phoneRegex = /^(\+44|0)[\d\s\-()]{10,}$/;
+    const phoneRegex = /^(\+254|254|07)[\d\s\-()]{8,}$/;
     const isPhone = phoneRegex.test(contact.replace(/\s/g, ''));
     
     return {
@@ -62,7 +62,7 @@ export function JobCard({ job, isLoggedIn, showContactInfo, onJobClick }: JobCar
             {job.title}
           </CardTitle>
           {job.salary && (
-            <Badge variant="secondary" className="btn-success text-white font-semibold px-3 py-1 self-start rounded-full">
+            <Badge variant="secondary" className="bg-accent text-accent-foreground font-semibold px-3 py-1 self-start rounded-full">
               {formatSalary(job.salary)}
             </Badge>
           )}

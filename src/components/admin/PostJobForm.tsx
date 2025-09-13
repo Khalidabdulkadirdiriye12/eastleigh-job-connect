@@ -186,7 +186,7 @@ export function PostJobForm() {
                 id="contactInfo"
                 name="contactInfo"
                 type="text"
-                placeholder="Phone number or WhatsApp (e.g. +1234567890)"
+                placeholder="Phone number or WhatsApp (e.g. +254794940900)"
                 value={formData.contactInfo}
                 onChange={handleInputChange}
                 required

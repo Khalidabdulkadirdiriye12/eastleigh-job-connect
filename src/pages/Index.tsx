@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { User, Session } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
+import { CTASection } from "@/components/features/CTASection";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { JobList } from "@/components/jobs/JobList";
@@ -103,6 +104,9 @@ const Index = () => {
           </div>
         </div>
       </section>
+
+      {/* CTA Section */}
+      <CTASection />
       
       <Footer />
     </div>
