@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { supabase } from "@/integrations/supabase/client";
-import { LogOut, User as UserIcon, Settings, Plus, BarChart3 } from "lucide-react";
+import { LogOut, User as UserIcon, Settings, Plus, BarChart3, Briefcase } from "lucide-react";
 
 export function Navbar() {
   const [user, setUser] = useState<User | null>(null);
@@ -72,6 +72,7 @@ export function Navbar() {
     <header className="border-b bg-card">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
         <Link to="/" className="flex items-center space-x-2">
+          <Briefcase className="h-6 w-6 text-primary" />
           <h1 className="text-2xl font-bold text-primary">Eastleigh Jobs</h1>
         </Link>
 
