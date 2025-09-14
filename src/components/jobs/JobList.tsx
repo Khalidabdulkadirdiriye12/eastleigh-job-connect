@@ -5,6 +5,15 @@ import { JobModal } from "./JobModal";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Search, MapPin, Loader2 } from "lucide-react";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 
 interface Job {
   id: string;
@@ -30,6 +39,10 @@ export function JobList({ isLoggedIn }: JobListProps) {
   const [locationFilter, setLocationFilter] = useState("");
   const [selectedJob, setSelectedJob] = useState<Job | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [paginatedJobs, setPaginatedJobs] = useState<Job[]>([]);
+  
+  const jobsPerPage = 30;
 
   useEffect(() => {
     fetchJobs();
@@ -38,6 +51,12 @@ export function JobList({ isLoggedIn }: JobListProps) {
   useEffect(() => {
     filterJobs();
   }, [jobs, searchTerm, locationFilter]);
+
+  useEffect(() => {
+    const startIndex = (currentPage - 1) * jobsPerPage;
+    const endIndex = startIndex + jobsPerPage;
+    setPaginatedJobs(filteredJobs.slice(startIndex, endIndex));
+  }, [filteredJobs, currentPage, jobsPerPage]);
 
   const handleJobClick = (job: Job) => {
     setSelectedJob(job);
@@ -104,6 +123,14 @@ export function JobList({ isLoggedIn }: JobListProps) {
     }
 
     setFilteredJobs(filtered);
+    setCurrentPage(1); // Reset to first page when filtering
+  };
+
+  const totalPages = Math.ceil(filteredJobs.length / jobsPerPage);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (
@@ -159,17 +186,83 @@ export function JobList({ isLoggedIn }: JobListProps) {
           <p className="text-muted-foreground text-sm">Try adjusting your search terms or location filter</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-          {filteredJobs.map((job) => (
-            <JobCard
-              key={job.id}
-              job={job}
-              isLoggedIn={isLoggedIn}
-              showContactInfo={true}
-              onJobClick={handleJobClick}
-            />
-          ))}
-        </div>
+        <>
+          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+            {paginatedJobs.map((job) => (
+              <JobCard
+                key={job.id}
+                job={job}
+                isLoggedIn={isLoggedIn}
+                showContactInfo={true}
+                onJobClick={handleJobClick}
+              />
+            ))}
+          </div>
+          
+          {totalPages > 1 && (
+            <div className="mt-8 flex justify-center">
+              <Pagination>
+                <PaginationContent>
+                  <PaginationItem>
+                    <PaginationPrevious
+                      href="#"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        if (currentPage > 1) handlePageChange(currentPage - 1);
+                      }}
+                      className={currentPage === 1 ? "pointer-events-none opacity-50" : ""}
+                    />
+                  </PaginationItem>
+                  
+                  {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => {
+                    let pageNumber;
+                    if (totalPages <= 5) {
+                      pageNumber = i + 1;
+                    } else if (currentPage <= 3) {
+                      pageNumber = i + 1;
+                    } else if (currentPage >= totalPages - 2) {
+                      pageNumber = totalPages - 4 + i;
+                    } else {
+                      pageNumber = currentPage - 2 + i;
+                    }
+                    
+                    return (
+                      <PaginationItem key={pageNumber}>
+                        <PaginationLink
+                          href="#"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            handlePageChange(pageNumber);
+                          }}
+                          isActive={currentPage === pageNumber}
+                        >
+                          {pageNumber}
+                        </PaginationLink>
+                      </PaginationItem>
+                    );
+                  })}
+                  
+                  {totalPages > 5 && currentPage < totalPages - 2 && (
+                    <PaginationItem>
+                      <PaginationEllipsis />
+                    </PaginationItem>
+                  )}
+                  
+                  <PaginationItem>
+                    <PaginationNext
+                      href="#"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        if (currentPage < totalPages) handlePageChange(currentPage + 1);
+                      }}
+                      className={currentPage === totalPages ? "pointer-events-none opacity-50" : ""}
+                    />
+                  </PaginationItem>
+                </PaginationContent>
+              </Pagination>
+            </div>
+          )}
+        </>
       )}
 
       <JobModal

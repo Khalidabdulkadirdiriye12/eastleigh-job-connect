@@ -8,6 +8,15 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { ServiceProviderCard } from "@/components/services/ServiceProviderCard";
 import { ServiceProviderModal } from "@/components/services/ServiceProviderModal";
 import { Search, Filter, Users } from "lucide-react";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 
 interface ServiceProvider {
   id: string;
@@ -45,6 +54,12 @@ export default function ServicesPage() {
   // Modal states
   const [selectedProvider, setSelectedProvider] = useState<ServiceProvider | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  
+  // Pagination states
+  const [currentPage, setCurrentPage] = useState(1);
+  const [paginatedProviders, setPaginatedProviders] = useState<ServiceProvider[]>([]);
+  
+  const providersPerPage = 30;
 
   useEffect(() => {
     checkUser();
@@ -54,6 +69,12 @@ export default function ServicesPage() {
   useEffect(() => {
     filterProviders();
   }, [providers, searchTerm, serviceTypeFilter, locationFilter, availabilityFilter, genderFilter]);
+
+  useEffect(() => {
+    const startIndex = (currentPage - 1) * providersPerPage;
+    const endIndex = startIndex + providersPerPage;
+    setPaginatedProviders(filteredProviders.slice(startIndex, endIndex));
+  }, [filteredProviders, currentPage, providersPerPage]);
 
   const checkUser = async () => {
     const { data: { session } } = await supabase.auth.getSession();
@@ -119,6 +140,14 @@ export default function ServicesPage() {
     }
 
     setFilteredProviders(filtered);
+    setCurrentPage(1); // Reset to first page when filtering
+  };
+
+  const totalPages = Math.ceil(filteredProviders.length / providersPerPage);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const clearFilters = () => {
@@ -253,16 +282,82 @@ export default function ServicesPage() {
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {filteredProviders.map((provider) => (
-              <ServiceProviderCard
-                key={provider.id}
-                provider={provider}
-                onClick={() => handleProviderClick(provider)}
-                isLoggedIn={isLoggedIn}
-              />
-            ))}
-          </div>
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {paginatedProviders.map((provider) => (
+                <ServiceProviderCard
+                  key={provider.id}
+                  provider={provider}
+                  onClick={() => handleProviderClick(provider)}
+                  isLoggedIn={isLoggedIn}
+                />
+              ))}
+            </div>
+            
+            {totalPages > 1 && (
+              <div className="mt-8 flex justify-center">
+                <Pagination>
+                  <PaginationContent>
+                    <PaginationItem>
+                      <PaginationPrevious
+                        href="#"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          if (currentPage > 1) handlePageChange(currentPage - 1);
+                        }}
+                        className={currentPage === 1 ? "pointer-events-none opacity-50" : ""}
+                      />
+                    </PaginationItem>
+                    
+                    {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => {
+                      let pageNumber;
+                      if (totalPages <= 5) {
+                        pageNumber = i + 1;
+                      } else if (currentPage <= 3) {
+                        pageNumber = i + 1;
+                      } else if (currentPage >= totalPages - 2) {
+                        pageNumber = totalPages - 4 + i;
+                      } else {
+                        pageNumber = currentPage - 2 + i;
+                      }
+                      
+                      return (
+                        <PaginationItem key={pageNumber}>
+                          <PaginationLink
+                            href="#"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              handlePageChange(pageNumber);
+                            }}
+                            isActive={currentPage === pageNumber}
+                          >
+                            {pageNumber}
+                          </PaginationLink>
+                        </PaginationItem>
+                      );
+                    })}
+                    
+                    {totalPages > 5 && currentPage < totalPages - 2 && (
+                      <PaginationItem>
+                        <PaginationEllipsis />
+                      </PaginationItem>
+                    )}
+                    
+                    <PaginationItem>
+                      <PaginationNext
+                        href="#"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          if (currentPage < totalPages) handlePageChange(currentPage + 1);
+                        }}
+                        className={currentPage === totalPages ? "pointer-events-none opacity-50" : ""}
+                      />
+                    </PaginationItem>
+                  </PaginationContent>
+                </Pagination>
+              </div>
+            )}
+          </>
         )}
       </main>
 
