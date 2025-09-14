@@ -90,7 +90,7 @@ export function ServiceProviderForm({ provider, onSuccess }: ServiceProviderForm
       if (!user) throw new Error("Not authenticated");
 
       const insertData = {
-        user_id: user.id,
+        user_id: provider?.user_id || crypto.randomUUID(), // Use existing user_id or generate new one for admin-created providers
         name: data.name,
         photo_url: data.photo_url || null,
         service_type: data.service_type,

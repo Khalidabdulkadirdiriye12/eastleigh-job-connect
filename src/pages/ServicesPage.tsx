@@ -7,9 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ServiceProviderCard } from "@/components/services/ServiceProviderCard";
 import { ServiceProviderModal } from "@/components/services/ServiceProviderModal";
-import { ServiceProviderForm } from "@/components/services/ServiceProviderForm";
-import { Search, Filter, Plus, Users } from "lucide-react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Search, Filter, Users } from "lucide-react";
 
 interface ServiceProvider {
   id: string;
@@ -34,7 +32,8 @@ export default function ServicesPage() {
   const [loading, setLoading] = useState(true);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [currentUser, setCurrentUser] = useState<any>(null);
-  const [userProvider, setUserProvider] = useState<ServiceProvider | null>(null);
+  const [userProfile, setUserProfile] = useState<any>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
   
   // Filter states
   const [searchTerm, setSearchTerm] = useState("");
@@ -46,7 +45,6 @@ export default function ServicesPage() {
   // Modal states
   const [selectedProvider, setSelectedProvider] = useState<ServiceProvider | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isFormOpen, setIsFormOpen] = useState(false);
 
   useEffect(() => {
     checkUser();
@@ -63,14 +61,15 @@ export default function ServicesPage() {
     setCurrentUser(session?.user || null);
 
     if (session?.user) {
-      // Check if user has a provider profile
-      const { data: provider } = await supabase
-        .from('service_providers')
+      // Check if user is admin
+      const { data: profile } = await supabase
+        .from('profiles')
         .select('*')
-        .eq('user_id', session.user.id)
+        .eq('id', session.user.id)
         .maybeSingle();
       
-      setUserProvider(provider);
+      setUserProfile(profile);
+      setIsAdmin(profile?.role === 'admin');
     }
   };
 
@@ -135,11 +134,6 @@ export default function ServicesPage() {
     setIsModalOpen(true);
   };
 
-  const handleProviderUpdate = () => {
-    fetchProviders();
-    checkUser();
-  };
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-background/50">
       <Navbar />
@@ -158,31 +152,15 @@ export default function ServicesPage() {
           </p>
         </div>
 
-        {/* Action Buttons */}
-        {isLoggedIn && (
+        {/* Action Buttons - Only show for admin */}
+        {isLoggedIn && isAdmin && (
           <div className="flex justify-center mb-8">
-            <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
-              <DialogTrigger asChild>
-                <Button className="btn-primary">
-                  <Plus className="h-4 w-4 mr-2" />
-                  {userProvider ? 'Edit My Profile' : 'Become a Service Provider'}
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="max-w-2xl">
-                <DialogHeader>
-                  <DialogTitle>
-                    {userProvider ? 'Edit Provider Profile' : 'Create Provider Profile'}
-                  </DialogTitle>
-                </DialogHeader>
-                <ServiceProviderForm
-                  provider={userProvider}
-                  onSuccess={() => {
-                    setIsFormOpen(false);
-                    handleProviderUpdate();
-                  }}
-                />
-              </DialogContent>
-            </Dialog>
+            <p className="text-center text-muted-foreground">
+              Service providers are managed through the Admin Dashboard.{' '}
+              <a href="/admin/dashboard" className="text-primary hover:underline">
+                Go to Admin Dashboard
+              </a>
+            </p>
           </div>
         )}
 
