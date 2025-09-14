@@ -90,6 +90,9 @@ export function Navbar() {
           <Link to="/jobs" className="text-muted-foreground hover:text-primary transition-smooth font-medium">
             Browse Jobs
           </Link>
+          <Link to="/services" className="text-muted-foreground hover:text-primary transition-smooth font-medium">
+            Services
+          </Link>
           <Link to="/about" className="text-muted-foreground hover:text-primary transition-smooth font-medium">
             About
           </Link>
@@ -128,6 +131,13 @@ export function Navbar() {
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   Browse Jobs
+                </Link>
+                <Link 
+                  to="/services" 
+                  className="mobile-nav-item"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Services
                 </Link>
                 <Link 
                   to="/about" 

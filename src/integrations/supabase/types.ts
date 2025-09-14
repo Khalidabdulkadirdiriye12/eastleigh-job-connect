@@ -85,6 +85,60 @@ export type Database = {
         }
         Relationships: []
       }
+      service_providers: {
+        Row: {
+          availability: Database["public"]["Enums"]["availability_status"]
+          bio: string | null
+          contact_info: string
+          created_at: string
+          experience_years: number | null
+          gender: Database["public"]["Enums"]["gender"]
+          hourly_rate: string | null
+          id: string
+          languages: string[] | null
+          location: string
+          name: string
+          photo_url: string | null
+          service_type: Database["public"]["Enums"]["service_type"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          availability?: Database["public"]["Enums"]["availability_status"]
+          bio?: string | null
+          contact_info: string
+          created_at?: string
+          experience_years?: number | null
+          gender: Database["public"]["Enums"]["gender"]
+          hourly_rate?: string | null
+          id?: string
+          languages?: string[] | null
+          location: string
+          name: string
+          photo_url?: string | null
+          service_type: Database["public"]["Enums"]["service_type"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          availability?: Database["public"]["Enums"]["availability_status"]
+          bio?: string | null
+          contact_info?: string
+          created_at?: string
+          experience_years?: number | null
+          gender?: Database["public"]["Enums"]["gender"]
+          hourly_rate?: string | null
+          id?: string
+          languages?: string[] | null
+          location?: string
+          name?: string
+          photo_url?: string | null
+          service_type?: Database["public"]["Enums"]["service_type"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -96,6 +150,19 @@ export type Database = {
       }
     }
     Enums: {
+      availability_status: "available" | "not_available" | "busy"
+      gender: "male" | "female" | "other"
+      service_type:
+        | "maid"
+        | "watchman"
+        | "cleaner"
+        | "driver"
+        | "cook"
+        | "gardener"
+        | "nanny"
+        | "security_guard"
+        | "handyman"
+        | "other"
       user_role: "user" | "admin"
     }
     CompositeTypes: {
@@ -224,6 +291,20 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      availability_status: ["available", "not_available", "busy"],
+      gender: ["male", "female", "other"],
+      service_type: [
+        "maid",
+        "watchman",
+        "cleaner",
+        "driver",
+        "cook",
+        "gardener",
+        "nanny",
+        "security_guard",
+        "handyman",
+        "other",
+      ],
       user_role: ["user", "admin"],
     },
   },
